@@ -1,0 +1,75 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from sklearn import datasets
+import numpy as np
+
+from matplotlib import font_manager
+# 字体解决方案参考：https://blog.csdn.net/weixin_52696285/article/details/127679362
+
+#获取数据-----------------------------------------
+#读取安德森鸢尾花卉数据集
+iris = datasets.load_iris()
+
+#前100个数据的x向量中的第3,4特征
+x1 = iris.data[:100, [2, 3]]
+#前100个数据的y值
+y1 = iris.target[:100]
+
+x2 = iris.data[50:150, [2, 3]]
+y2 = iris.target[50: 150]
+
+y1 = np.where(y1 == 0, 1, -1)
+y2 = np.where(y2 == 1, -1, 1)
+
+#算法部分-----------------------------------------
+def d(x):
+    return np.dot(w,x) + b
+# def sign(x):
+#     return 1 if x >= 0 else -1
+# def h(x):
+#     return sign(d(x))
+
+w, b = np.array([0, 0]), 0
+exist_wrong = True
+
+while exist_wrong: #若循环停止，已找到正确w,b
+    exist_wrong = False
+    for x, y in zip(x1, y1):
+        if y*d(x) <= 0:
+            w = w + y*x
+            b = b + y
+            exist_wrong = True
+            break
+
+
+#画图部分-----------------------------------------
+#画布对象大小(6,3)，1行2列
+fig, ax = plt.subplots(1, 2, figsize=(6, 3))
+#fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize=(6, 3))
+
+plt.subplots_adjust(left=0.08, right=0.97, top=0.9, bottom=0.1, wspace=0.08)
+#调整画布对象，参考：https://blog.csdn.net/ggt55ng6/article/details/88879689?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-88879689-blog-104589415.235^v32^pc_relevant_default_base3&spm=1001.2101.3001.4242.1&utm_relevant_index=3
+
+cmap = ListedColormap(('darkseagreen', 'blue', 'red'))
+
+#scatter()参考：https://blog.csdn.net/AnneQiQi/article/details/64125186
+ax[0].set_title("线性可分", fontproperties='Microsoft YaHei')
+ax[0].plot((0,(-b)/w[1]),((-b)/w[0], 0))
+for i in range(50):
+    ax[0].scatter(x1[i][0], x1[i][1], color = cmap(0), edgecolors= 'k', marker = 's', alpha = 0.8)
+    #edgecolors='k'设置散点边缘颜色为黑,alpha为透明度,marker为散点形状
+for i in range(50,100):
+    ax[0].scatter(x1[i][0], x1[i][1], color = cmap(1), edgecolors= 'k', marker = 'x', alpha = 0.8)
+
+ax[1].set_title("线性不可分", fontproperties='Microsoft YaHei')
+ax[1].get_yaxis().set_visible(False) #为了美观隐藏ax[1]坐标轴y
+for i in range(50):
+    ax[1].scatter(x2[i][0], x2[i][1], color = cmap(1), edgecolors= 'k', marker = 'x', alpha = 0.8)
+    #edgecolors='k'设置散点边缘颜色为黑,alpha为透明度,marker为散点形状
+for i in range(50, 100):
+    ax[1].scatter(x2[i][0], x2[i][1], color = cmap(2), edgecolors= 'k', marker = 'o', alpha = 0.8)
+
+plt.show()
