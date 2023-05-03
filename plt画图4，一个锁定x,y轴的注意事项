@@ -1,0 +1,37 @@
+#这种方式不行，原因就在于gca()取轴放在了clf()之前，具体机制未深究
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+fig = plt.figure()
+
+for i in np.arange(1,0,-0.01):
+    ax = plt.gca()
+    plt.clf()
+    ax.set_xlim([0, 1])
+    ax.set_ylim([0, 1])
+    plt.plot((0, i), (i, 0))
+    plt.pause(0.01)
+
+plt.show()
+----------------------------------------------------
+#正确做法
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+fig = plt.figure()
+
+for i in np.arange(1,0,-0.01):
+    plt.clf()
+    ax = plt.gca()
+    ax.set_xlim([0, 1])
+    ax.set_ylim([0, 1])
+    plt.plot((0, i), (i, 0))
+    plt.pause(0.01)
+
+plt.show()
