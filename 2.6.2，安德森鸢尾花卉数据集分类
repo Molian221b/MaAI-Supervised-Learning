@@ -77,7 +77,9 @@ while exist_wrong: #若循环停止，已找到正确w,b
             b = b + y
             exist_wrong = True
             break
-ax[0].plot((0, (-b) / w[1]), ((-b) / w[0], 0))
+        # plt.pause(0.01)
+        ax[0].plot((0, 6), ((-b) / w[1], (-b - 6 * w[0]) / w[1])) #注意plot()中的参数x代表所有横坐标，y代表所有纵坐标，与每个点（坐标）这种直觉不同
+
 
 w, b = np.array([0, 0]), 0
 exist_wrong = True
@@ -90,5 +92,7 @@ while exist_wrong: #若循环停止，已找到正确w,b
             b = b + y
             exist_wrong = True
             break
+    plt.pause(0.01)
+    ax[1].plot((2.5, 8), ((-b-2.5*w[0])/w[1], (-b-8*w[0])/w[1]))
 
 plt.show()
