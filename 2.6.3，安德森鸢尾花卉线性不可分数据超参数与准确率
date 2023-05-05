@@ -29,7 +29,6 @@ def clf_score(x, y):
 #画图部分-----------------------------------------
 fig = plt.figure()
 fig.canvas.set_window_title("感知机") #修改fig的名字
-# fig.suptitle("安德森鸢尾花卉线性不可分数据集",fontproperties='Microsoft YaHei') #由于后面会clf()所以放这里是无效的
 cmap = ListedColormap(('darkseagreen', 'blue', 'red'))
 
 w, b = np.array([0, 0]), 0
@@ -37,7 +36,7 @@ exist_wrong = True
 best_w, best_b = 0, 0
 best_score = 0
 accuracy = 0
-epoch = 10000
+epoch = 3000
 
 for _ in range(epoch):
     for x, y in zip(x2, y2):
@@ -50,9 +49,9 @@ for _ in range(epoch):
                 best_w, best_b = w, b
             break
     accuracy = (best_score + 100)/2/100
-    print(accuracy)
+    print("accuracy:{:.2f}".format(accuracy))
     plt.clf()
-    fig.suptitle("安德森鸢尾花卉线性不可分数据集", fontproperties='Microsoft YaHei') #放这里才有效
+    fig.suptitle("安德森鸢尾花卉线性不可分数据集\n当前准确率：{:.2f}".format(accuracy), fontproperties='Microsoft YaHei') #放这里才有效
     plt.xlim(2.5, 7.5)  # 限制x轴y轴
     plt.ylim(0.5, 3)
     for i in range(50):
