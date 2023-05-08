@@ -1,1 +1,42 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+iris = datasets.load_iris()
+x = iris.data[50: 150, [2, 3]]
+y = np.where(iris.target[50: 150] == 1, -1, 1)
+
+x_temp, x_test, y_temp, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+x_train, x_val, y_train, y_val = train_test_split(x_temp, y_temp, test_size=0.25, random_state=42)
+
+#方便一会循环调用
+xs = (x_train, x_val, x_test)
+ys = (y_train, y_val, y_test)
+
+fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize = (9,3))
+plt.subplots_adjust(left = 0.01, bottom = 0.1, right = 0.99, top = 0.99, wspace = 0.1)
+
+cmaps = (ListedColormap(('blue', 'red')), ListedColormap(('dodgerblue', 'bisque')), ListedColormap(('forestgreen', 'peru')))
+xlabels = ('训练集', '验证集', '测试集')
+markers = ('x', 'o')
+
+for ax, xlabel, cm, x, y in zip(axes, xlabels, cmaps, xs, ys):
+    ax.set(xticks=[],yticks=[])
+    ax.set_xlabel(xlabel, fontproperties='Microsoft YaHei')
+    
+    #实际上cmap是给定一个颜色区域，c是给每个点都安排的数值从低到高分配颜色，比如cmap=[红绿蓝]，假设有8个点，对应一个8维数组[11100533]，那么红绿蓝会平均分成8个刻度，
+    #0对应最低刻度，5对应最高刻度，前三个点就是1刻度对应的颜色。。。
+    #但不知道内部设置了什么机制，如果不设置vmin，vmax的话，红绿蓝平均分成8个刻度这个过程中，起始刻度和终点刻度可能并不是最低值0和最高值5
+    #比如这个8维数组是[00001111],那么8个点很可能都是红色，因为没设置vmin，vmax的时候颜色范围刻度可能是0-5，这样数组中的0和1还是会被分配到红这个颜色中
+    #非常奇怪，不知道为什么要这么设计，为什么不直接默认vmin=最小刻度比如0，vmax=最大刻度比如5，猜测一种可能，比如数组是[1110053,3000]，这个数组中如果默认vmin和vmax的话那么前7个点都会是一个颜色！
+    #实际上可能需求1110053被正常划分，而3000被“随意”划分的情况更多一些
+    vmin, vmax = min(y), max(y) 
+    for cl, m in zip(np.unique(y), markers):
+        ax.scatter(x = x[y==cl, 0], y = x[y==cl,1], marker = m, edgecolors='k',  c = y[y==cl], cmap = cm, vmin = vmin, vmax = vmax)
+        print(cm)
+plt.show()
