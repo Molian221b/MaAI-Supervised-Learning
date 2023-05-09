@@ -1,0 +1,24 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 生成示例数据集
+X = np.array([[1, 2],
+              [3, 4],
+              [5, 6],
+              [7, 8]])
+y = np.array([0, 1, 0, 1])
+
+# 选择类别为 1 的样本的特征值
+x = X[y == 1, 0]
+# 选择类别为 1 的样本的目标变量值
+y = X[y == 1, 1]
+
+# 绘制散点图
+plt.scatter(x, y)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Scatter Plot')
+
+plt.show()
