@@ -20,6 +20,7 @@ ys = (y_train, y_val, y_test)
 
 fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize = (9,3))
 plt.subplots_adjust(left = 0.01, bottom = 0.1, right = 0.99, top = 0.99, wspace = 0.1)
+plt.rcParams.update({'font.size': 10}) #设置字体大小
 
 cmaps = (ListedColormap(('blue', 'red')), ListedColormap(('dodgerblue', 'bisque')), ListedColormap(('forestgreen', 'peru')))
 xlabels = ('训练集', '验证集', '测试集')
