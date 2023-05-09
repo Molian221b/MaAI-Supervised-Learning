@@ -1,0 +1,24 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.colors import ListedColormap
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+values = [0,1,2,3,1]
+
+vmin = min(values)  # 计算最小值
+
+colors = ['red', 'green']
+cm = ListedColormap(colors)
+
+
+plt.scatter(x, y, c=values, cmap=ListedColormap(colors),vmin=0,vmax=3)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Scatter Plot with Color Mapping')
+
+plt.colorbar()
+
+plt.show()
