@@ -72,7 +72,7 @@ for ax, xlabel, cm, x, y in zip(axes, xlabels, cmaps, xs, ys):
     ax.set(xticks=[],yticks=[])
     ax.set_xlim(2.5, 7.5)  # 限制x轴y轴
     ax.set_ylim(0.5, 3)
-    ax.set_xlabel("{}准确率：{:.2f}".format(xlabel, cur_accuracy(x, y)), fontproperties='Microsoft YaHei')
+    ax.set_xlabel("{}准确率：{:.2%}".format(xlabel, cur_accuracy(x, y)), fontproperties='Microsoft YaHei')
     ax.plot((2.5, 7), ((-best_b - 2.5 * best_w[0]) / best_w[1], (-best_b - 7 * best_w[0]) / best_w[1]))
 
     vmin, vmax = min(y), max(y)
