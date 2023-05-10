@@ -1,0 +1,82 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+def d(x):
+    return np.dot(w, x) + b
+def sign(x):
+    return 1 if x >= 0 else -1
+def h(x):
+    return sign(d(x))
+def clf_score(x, y):
+    score = 0
+    for xi, yi in zip(x, y):
+        score += yi*h(xi)
+    return score
+
+def best_d(x):
+    return np.dot(best_w, x) + best_b
+def best_h(x):
+    return sign(best_d(x))
+def best_clf_score(x, y):
+    score = 0
+    for xi, yi in zip(x, y):
+        score += yi*best_h(xi)
+    return score
+def cur_accuracy(x,y):
+    best_score = best_clf_score(x, y)
+    return (best_score + len(x))/2/len(x)
+
+iris = datasets.load_iris()
+x = iris.data[50: 150, [2, 3]]
+y = np.where(iris.target[50: 150] == 1, -1, 1)
+
+x_temp, x_test, y_temp, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+x_train, x_val, y_train, y_val = train_test_split(x_temp, y_temp, test_size=0.25, random_state=42)
+
+#方便一会循环调用
+xs = (x_train, x_val, x_test)
+ys = (y_train, y_val, y_test)
+
+w, b = np.array([0, 0]), 0
+best_w, best_b = 0, 0
+best_score = 0
+accuracy = 0
+epoch = 500
+
+for _ in range(epoch):
+    for x, y in zip(x_train, y_train):
+        if y*d(x) <= 0:
+            w = w + y*x
+            b = b + y
+            score = clf_score(x_train, y_train)
+            if score > best_score:
+                best_score = score
+                best_w, best_b = w, b
+            break
+
+fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize = (9,3))
+plt.subplots_adjust(left = 0.01, bottom = 0.1, right = 0.99, top = 0.99, wspace = 0.1)
+plt.rcParams.update({'font.size': 10}) # 设置字体大小
+
+cmaps = (ListedColormap(('blue', 'red')), ListedColormap(('dodgerblue', 'bisque')), ListedColormap(('forestgreen', 'peru')))
+xlabels = ('训练集', '验证集', '测试集')
+markers = ('x', 'o')
+
+for ax, xlabel, cm, x, y in zip(axes, xlabels, cmaps, xs, ys):
+    ax.set(xticks=[],yticks=[])
+    ax.set_xlim(2.5, 7.5)  # 限制x轴y轴
+    ax.set_ylim(0.5, 3)
+    ax.set_xlabel("{}准确率：{:.2f}".format(xlabel, cur_accuracy(x, y)), fontproperties='Microsoft YaHei')
+    ax.plot((2.5, 7), ((-best_b - 2.5 * best_w[0]) / best_w[1], (-best_b - 7 * best_w[0]) / best_w[1]))
+
+    vmin, vmax = min(y), max(y)
+    for cl, m in zip(np.unique(y), markers):
+        ax.scatter(x = x[y==cl, 0], y = x[y==cl,1], marker = m, edgecolors='k',  c = y[y==cl], cmap = cm, vmin = vmin, vmax = vmax)
+
+plt.show()
