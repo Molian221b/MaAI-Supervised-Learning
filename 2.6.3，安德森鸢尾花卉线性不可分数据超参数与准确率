@@ -51,7 +51,7 @@ for _ in range(epoch):
     accuracy = (best_score + 100)/2/100
     print("accuracy:{:.2f}".format(accuracy))
     plt.clf()
-    fig.suptitle("安德森鸢尾花卉线性不可分数据集\n当前准确率：{:.2f}".format(accuracy), fontproperties='Microsoft YaHei') #放这里才有效
+    fig.suptitle("安德森鸢尾花卉线性不可分数据集\n当前准确率：{:.2%}".format(accuracy), fontproperties='Microsoft YaHei') #放这里才有效
     plt.xlim(2.5, 7.5)  # 限制x轴y轴
     plt.ylim(0.5, 3)
     for i in range(50):
