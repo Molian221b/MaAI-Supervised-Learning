@@ -26,7 +26,7 @@ y = np.where(iris.target[50: 150] == 1, -1, 1)
 X_tv, X_test, y_tv, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 w, b = np.array([0, 0]), 0
-epochs = 100
+epochs = 200
 best_w, best_b = 0, 0
 best_score = 0
 
