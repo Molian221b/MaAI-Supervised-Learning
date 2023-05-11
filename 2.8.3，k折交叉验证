@@ -1,0 +1,66 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
+import numpy as np
+
+def d(x):
+    return np.dot(w, x) + b
+def sign(x):
+    return 1 if x >= 0 else -1
+def h(x):
+    return sign(d(x))
+#给出一组数据点，在当前w,b的设置下，算出总得分，分对+1，分错-1
+def clf_score(x, y):
+    score = 0
+    for xi, yi in zip(x, y):
+        score += yi*h(xi)
+    return score
+
+iris = datasets.load_iris()
+X = iris.data[50: 150, [2, 3]]
+y = np.where(iris.target[50: 150] == 1, -1, 1)
+
+X_tv, X_test, y_tv, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+w, b = np.array([0, 0]), 0
+epochs = 100
+best_w, best_b = 0, 0
+best_score = 0
+
+#感知机口袋算法，给定一组数据点找出best_w, best_b
+def PAL_pocket(X, y):
+    global w, b, epochs
+    w, b = np.array([0, 0]), 0
+    best_w, best_b = w, b
+    best_score = clf_score(X, y)
+    for _ in range(epochs):
+        for xi, yi in zip(X, y):
+            if yi*d(xi) <= 0:
+                w = w + yi*xi
+                b = b + yi
+                score = clf_score(X, y) #此时w,b已更新
+                if score > best_score:
+                    best_score = score
+                    best_w, best_b = w, b
+                break
+    w, b = best_w, best_b #为什么要加这句是因为即便上面循环找到了best_w,best_b，但是w,b依然在不断变化
+
+k = 10
+kf = KFold(n_splits = k, random_state = 42)
+accuracy_sum = 0
+
+#"clf"是 "classifier" 的缩写
+#"tv" 是 "train-validation"的缩写
+#"val"是 "validation" 的缩写
+#"PAL"是 "Perceptron Learning Algorithm"的缩写
+for n, (train, val) in zip(range(k), kf.split(X_tv)):
+    X_train, y_train, X_val, y_val = X_tv[train], y_tv[train], X_tv[val], y_tv[val]
+    PAL_pocket(X_train, y_train) #找出当前状态下的best_w,best_b
+    split_train_accuracy = (clf_score(X_train, y_train)+len(X_train))/2/len(X_train)
+    split_val_accuracy = (clf_score(X_val, y_val)+len(X_val))/2/len(X_val)
+    print(r'第 {} 折，训练集准确率 {:.2%} ，验证集准确率 {:.2%}'.format(n + 1, split_train_accuracy, split_val_accuracy))
+    accuracy_sum += split_val_accuracy
+print(r'epochs = {}，验证集准确率的平均值为 {:.2%}。'.format(epochs, accuracy_sum / k))
