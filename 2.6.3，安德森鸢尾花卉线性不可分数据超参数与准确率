@@ -63,3 +63,65 @@ for _ in range(epoch):
     plt.pause(0.001)
 
 plt.show()
+--------------------------------------------------------------------------
+# 只画最佳直线写法
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from sklearn import datasets
+import numpy as np
+
+iris = datasets.load_iris()
+
+X = iris.data[50:150, [2, 3]]
+y = iris.target[50:150]
+y = np.where(y == 1, -1, 1)
+
+def d(x):
+    return np.dot(w,x)+b
+def sign(x):
+    return 1 if x >= 0 else -1
+def h(x):
+    return sign(d(x))
+def clf_score(x,y):
+    score = 0
+    for xi,yi in zip(x,y):
+        if yi*h(xi) > 0:
+            score += 1
+    return score
+
+w, b = np.array([0, 0]), 0
+epochs = 1000
+accuracy = 0
+best_score = clf_score(X,y)
+best_w, best_b = np.array([0, 0]), 0
+for _ in range(epochs):
+    for xi, yi in zip(X, y):
+        if yi*h(xi) <= 0:
+            w = w + yi*xi
+            b = b + yi
+            score = clf_score(X, y)
+            if score > best_score:
+                best_score = clf_score(X, y)
+                best_w, best_b = w, b
+            break
+    accuracy = (best_score + len(X))/2/100
+
+fig, ax = plt.subplots(figsize = (6, 5), nrows=1, ncols=1)
+fig.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
+# ax.set(xticks=[], yticks=[])
+ax.set_xlim(2.5, 7.5)
+ax.set_ylim(0.5, 3)
+ax.plot((2.5, 7.5), ((-best_b - 2.5 * best_w[0]) / best_w[1], (-best_b - 7.5 * best_w[0]) / best_w[1]))
+ax.set_xlabel("准确率：{:.2%}".format(accuracy), fontproperties='Microsoft YaHei')
+
+cm = ListedColormap(('blue', 'red'))
+mark = ('x', 'o')
+vmin = min(y)
+vmax = max(y)
+for cl, m in zip(np.unique(y), mark):
+    ax.scatter(x=X[y==cl, 0], y=X[y==cl, 1], c=y[y==cl], marker=m, edgecolors='k', cmap=cm, alpha=1, vmin=vmin, vmax=vmax)
+
+plt.show()
