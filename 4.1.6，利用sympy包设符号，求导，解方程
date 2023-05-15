@@ -1,0 +1,22 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+#symbols()生成符号，diff()求导，solve()解方程
+
+from sympy import symbols, diff, solve
+import numpy as np
+
+X = np.array([1.51, 1.64, 1.6, 1.73, 1.82, 1.87])
+y = np.array([1.63, 1.7, 1.71, 1.72, 1.76, 1.86])
+
+w, b = symbols('w b', real = True)
+RDh = 0
+for xi, yi in zip(X, y):
+    RDh += (yi - (xi * w + b)) ** 2
+RDh = RDh/len(X)
+
+eRDhw = diff(RDh, w, 1)
+eRDhb = diff(RDh, b, 1)
+
+ans = solve((eRDhw, eRDhb), (w, b))
+print('使得经验误差函数 RD(h) 取最小值的参数为：{}'.format(ans))
